@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Heaven Gold City Phase II - Payment Schedule</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  @page { size: A4; margin: 0; }
+  body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  .a4 {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    margin: auto;
+    background: url('payment-schedule.jpg') no-repeat center top;
+    background-size: cover;
+    top: 30px;
+  }
+
+  .field {
+    position: absolute;
+    font-size: 10pt;
+    color: #000;
+    background: transparent;
+    border: none;
+    outline: none;
+  }
+
+  .no-print {
+    margin: 13px 0;
+    text-align: center;
+  }
+  .btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+  }
+  .btn:hover { background: #555; }
+
+  @media print {
+    .no-print { display: none; }
+    .field { border: none; }
+  }
+
+  /* === Field positions (adjust to match your background exactly) === */
+  #saleDate     { top: 62mm; left: 35mm; width: 35mm; }
+  #saleTerm     { top: 62mm; left: 109mm; width: 40mm; }
+  #projectname  { top: 80mm; left: 45mm; width: 120mm; }
+  #name         { top: 89mm; left: 25mm; width: 120mm; }
+  #fatherName   { top: 98mm; left: 60mm; width: 120mm; }
+  #nic          { top: 107mm; left: 33mm; width: 40mm; }
+  #contact      { top: 107mm; left: 93mm; width: 40mm; }
+  #email        { top: 107mm; left: 139mm; width: 50mm; }
+  #address      { top: 116mm; left: 54mm; width: 165mm; }
+
+  #propertyNo   { top: 125mm; left: 37mm; width: 35mm; }
+  #size         { top: 125mm; left: 87mm; width: 35mm; }
+  #location     { top: 125mm; left: 147mm; width: 80mm; }
+  #category     { top: 134mm; left: 31mm; width: 35mm; }
+  #features     { top: 134mm; left: 95mm; width: 125mm; }
+
+  #westOpen     { top: 143mm; left: 35mm; width: 35mm; }
+  #parkFacing   { top: 143mm; left: 100mm; width: 35mm; }
+  #totalSaleAmt { top: 143mm; left: 156mm; width: 60mm; }
+
+  #roadFacing   { top: 152mm; left: 37mm; width: 35mm; }
+  #corner       { top: 152mm; left: 91mm; width: 35mm; }
+  #discount     { top: 152mm; left: 146mm; width: 60mm; }
+
+  #groundFacing { top: 161mm; left: 42mm; width: 35mm; }
+  #netSaleAmt   { top: 161mm; left: 111mm; width: 105mm; }
+
+  /* Row template — initial row top. New rows will be added below this */
+  .payment-row .date { left: 28mm; width: 30mm; }
+  .payment-row .desc { left: 65mm; width: 90mm; }
+  .payment-row .amt  { left: 160mm; width: 35mm; }
+
+  footer {
+    text-align: center;
+    font-size: 13px;
+    padding: 6px;
+    background: #333;
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+
+<!-- Controls -->
+<div class="no-print">
+  <button class="btn" onclick="window.print()">🖨️ Print</button>
+  <button class="btn" id="addRowBtn">➕ Add Payment Row</button>
+  <button class="btn" id="removeRowBtn">➖ Remove Last Row</button>
+  <!-- <button class="btn" id="downloadCsvBtn">⬇️ Download CSV</button> -->
+</div>
+
+<!-- A4 Page -->
+<div class="a4" id="page">
+
+  <!-- Basic Info Fields -->
+  <input id="saleDate" class="field" type="text" placeholder="Sale Date">
+  <input id="saleTerm" class="field" type="text" placeholder="Sale Term">
+  <input id="projectname" class="field" type="text" placeholder="Project Name">
+  <input id="name" class="field" type="text" placeholder="Name">
+  <input id="fatherName" class="field" type="text" placeholder="Father/Husband Name">
+  <input id="nic" class="field" type="text" placeholder="N.I.C No">
+  <input id="contact" class="field" type="text" placeholder="Contact">
+  <input id="email" class="field" type="text" placeholder="Email">
+  <input id="address" class="field" type="text" placeholder="Residential Address">
+
+  <!-- Property Info -->
+  <input id="propertyNo" class="field" type="text" placeholder="Property No">
+  <input id="size" class="field" type="text" placeholder="Size">
+  <input id="location" class="field" type="text" placeholder="Location">
+  <input id="category" class="field" type="text" placeholder="Category">
+  <input id="features" class="field" type="text" placeholder="Features">
+
+  <!-- Additional Details -->
+  <input id="westOpen" class="field" type="text" placeholder="West Open">
+  <input id="parkFacing" class="field" type="text" placeholder="Park Facing">
+  <input id="totalSaleAmt" class="field" type="text" placeholder="Total Sale Amt">
+  <input id="roadFacing" class="field" type="text" placeholder="Road Facing">
+  <input id="corner" class="field" type="text" placeholder="Corner">
+  <input id="discount" class="field" type="text" placeholder="Discount">
+  <input id="groundFacing" class="field" type="text" placeholder="Ground Facing">
+  <input id="netSaleAmt" class="field" type="text" placeholder="Net Sale Amount">
+
+  <!-- Payment rows container (rows are absolutely positioned inside the page) -->
+  <div id="rowsContainer"></div>
+</div>
+
+
+<script>
+/*
+  Row builder:
+  - rowsContainer holds dynamically created input groups (.payment-row)
+  - new rows are positioned absolutely by setting style.top in mm
+  - initialTopMM and rowStepMM control spacing — tweak as needed to match background
+*/
+(function () {
+  const rowsContainer = document.getElementById('rowsContainer');
+  const addBtn = document.getElementById('addRowBtn');
+  const removeBtn = document.getElementById('removeRowBtn');
+  const downloadBtn = document.getElementById('downloadCsvBtn');
+
+  // first row top (mm) and spacing between rows
+  let initialTopMM = 180;   // matches earlier example row top
+  const rowStepMM = 6;      // gap between rows in mm
+  let rowCount = 0;
+
+  function createRow(topMM) {
+    rowCount++;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'payment-row';
+    wrapper.style.position = 'absolute';
+    wrapper.style.top = topMM + 'mm';
+    wrapper.style.left = '0';
+    wrapper.style.width = '100%';
+
+    // date input
+    const date = document.createElement('input');
+    date.type = 'text';
+    date.placeholder = 'Due Date';
+    date.className = 'field date';
+    date.style.position = 'absolute';
+    date.style.top = '-10px';
+    date.style.left = '33mm';
+    date.style.width = '30mm';
+    date.dataset.col = 'date';
+    wrapper.appendChild(date);
+
+    // desc input
+    const desc = document.createElement('input');
+    desc.type = 'text';
+    desc.placeholder = 'Description';
+    desc.className = 'field desc';
+    desc.style.position = 'absolute';
+    desc.style.top = '-9px';
+    desc.style.left = '80mm';
+    desc.style.width = '90mm';
+    desc.dataset.col = 'description';
+    wrapper.appendChild(desc);
+
+    // amount input
+    const amt = document.createElement('input');
+    amt.type = 'text';
+    amt.placeholder = 'Amount';
+    amt.className = 'field amt';
+    amt.style.position = 'absolute';
+    amt.style.top = '-7px';
+    amt.style.left = '158mm';
+    amt.style.width = '35mm';
+    amt.dataset.col = 'amount';
+    wrapper.appendChild(amt);
+
+    rowsContainer.appendChild(wrapper);
+    return wrapper;
+  }
+
+  function addRow() {
+    const top = initialTopMM + rowCount * rowStepMM;
+    createRow(top);
+  }
+
+  function removeRow() {
+    if (rowCount === 0) return;
+    const last = rowsContainer.lastElementChild;
+    if (last) {
+      rowsContainer.removeChild(last);
+      rowCount--;
+    }
+  }
+
+  function collectDataToCSV() {
+    // Collect basic fields
+    const basic = {
+      saleDate: document.getElementById('saleDate').value,
+      saleTerm: document.getElementById('saleTerm').value,
+      projectname: document.getElementById('projectname').value,
+      name: document.getElementById('name').value,
+      fatherName: document.getElementById('fatherName').value,
+      nic: document.getElementById('nic').value,
+      contact: document.getElementById('contact').value,
+      email: document.getElementById('email').value,
+      address: document.getElementById('address').value,
+      propertyNo: document.getElementById('propertyNo').value,
+      size: document.getElementById('size').value,
+      location: document.getElementById('location').value,
+      category: document.getElementById('category').value,
+      features: document.getElementById('features').value,
+      totalSaleAmt: document.getElementById('totalSaleAmt').value,
+      discount: document.getElementById('discount').value,
+      netSaleAmt: document.getElementById('netSaleAmt').value
+    };
+
+    // Payment rows
+    const rows = [];
+    Array.from(rowsContainer.children).forEach((r) => {
+      const rowObj = {};
+      const inputs = r.querySelectorAll('input');
+      inputs.forEach(i => {
+        const k = i.dataset.col || i.placeholder || '';
+        rowObj[k] = i.value;
+      });
+      rows.push(rowObj);
+    });
+
+    // Build CSV text: first basic info, then payment rows
+    const lines = [];
+    // Basic section
+    lines.push('Field,Value');
+    Object.entries(basic).forEach(([k,v]) => {
+      lines.push(`"${k}","${(v||'').replace(/"/g,'""')}"`);
+    });
+
+    // Payment rows section
+    lines.push('');
+    lines.push('Row,Due Date,Description,Amount');
+    rows.forEach((r,index) => {
+      lines.push(`${index+1},"${(r.date||'').replace(/"/g,'""')}","${(r.description||'').replace(/"/g,'""')}","${(r.amount||'').replace(/"/g,'""')}"`);
+    });
+
+    return lines.join('\n');
+  }
+
+  function downloadCSV() {
+    const csv = collectDataToCSV();
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'payment-schedule.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  // Event bindings
+  addBtn.addEventListener('click', addRow);
+  removeBtn.addEventListener('click', removeRow);
+  //downloadBtn.addEventListener('click', downloadCSV);
+
+  // add initial example row
+  addRow();
+})();
+</script>
+
+</body>
+</html>

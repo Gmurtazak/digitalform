@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Receipt Form</title>
+<style>
+  @page { size: A4; margin: 0; }
+  body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  .a4 {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    margin: auto;
+background: url('receipt-form.jpg') no-repeat center top;
+    background-size: cover;
+    top: 25px;
+  }
+
+  .field {
+    position: absolute;
+    font-size: 11pt;
+    line-height: 1.2;
+    color: #000;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 2px 4px;
+  }
+
+  .no-print { text-align:center; margin:10px; }
+  .btn {
+    display:inline-block;
+    padding:6px 12px;
+    margin:4px;
+    font-size:13px;
+    cursor:pointer;
+    background:#333;
+    color:#fff;
+    border:none;
+    border-radius:4px;
+  }
+  .btn:hover { background:#555; }
+
+  @media print {
+    .no-print { display: none; }
+    footer { display: none; } /* hide footer when printing */
+    .field { border: none; }  /* hide input borders when printing */
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 13px;
+  }
+
+  /* --- Office Copy (top half) --- */
+  #folio1 { top: 47mm; left: 35mm; width: 40mm; }
+  #date1 { top: 46mm; left: 155mm; width: 35mm; }
+  #received1 { top: 53mm; left: 51mm; width: 120mm; }
+  #father1 { top: 60mm; left: 67mm; width: 120mm; }
+  #nic1 { top: 66mm; left: 40mm; width: 65mm; }
+  #contact1 { top: 65mm; left: 135mm; width: 60mm; }
+
+  #saleid1 { top: 78mm; left: 53mm; width: 60mm; }
+  #propertyno1 { top: 78mm; left: 143mm; width: 40mm; }
+  #size1 { top: 83mm; left: 30mm; width: 60mm; }
+  #location1 { top: 83mm; left: 136mm; width: 60mm; }
+  #reference1 { top: 90mm; left: 42mm; width: 150mm; }
+  #remarks1 { top: 90mm; left: 137mm; width: 60mm; }
+  #cheque1 { top: 96mm; left: 95mm; width: 110mm; }
+  #bank1 { top: 103mm; left: 73mm; width: 120mm; }
+  #words1 { top: 109mm; left: 56mm; width: 120mm; }
+  #amount1 { top: 116mm; left: 39mm; width: 60mm; }
+  #balance1 { top: 122mm; left: 38mm; width: 60mm; }
+
+  /* --- Client Copy (bottom half) --- */
+  #folio2 { top: 194mm; left: 35mm; width: 40mm; }
+  #date2 { top: 194mm; left: 155mm; width: 35mm; }
+  #received2 { top: 201mm; left: 52mm; width: 120mm; }
+  #father2 { top: 207mm; left: 68mm; width: 120mm; }
+  #nic2 { top: 214mm; left: 39mm; width: 65mm; }
+  #contact2 { top: 213mm; left: 136mm; width: 60mm; }
+
+  #saleid2 { top: 226mm; left: 54mm; width: 60mm; }
+  #propertyno2 { top: 225mm; left: 144mm; width: 40mm; }
+  #size2 { top: 231mm; left: 31mm; width: 60mm; }
+  #location2 { top: 231mm; left: 137mm; width: 60mm; }
+  #reference2 { top: 238mm; left: 43mm; width: 150mm; }
+  #remarks2 { top: 237mm; left: 138mm; width: 60mm; }
+  #cheque2 { top: 244mm; left: 95mm; width: 110mm; }
+  #bank2 { top: 250mm; left: 74mm; width: 120mm; }
+  #words2 { top: 256mm; left: 57mm; width: 120mm; }
+  #amount2 { top: 263mm; left: 40mm; width: 60mm; }
+  #balance2 { top: 269mm; left: 39mm; width: 60mm; }
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <button class="btn" onclick="window.print()">🖨️ Print</button>
+</div>
+
+<div class="a4">
+  <!-- Office Copy -->
+  <input id="folio1" class="field" type="text" placeholder="Folio">
+  <input id="date1" class="field" type="text" placeholder="Date">
+  <input id="received1" class="field" type="text" placeholder="Received From">
+  <input id="father1" class="field" type="text" placeholder="Father/Husband Name">
+  <input id="nic1" class="field" type="text" placeholder="NIC">
+  <input id="contact1" class="field" type="text" placeholder="Contact">
+  <input id="saleid1" class="field" type="text" placeholder="Sale ID">
+  <input id="propertyno1" class="field" type="text" placeholder="Property No">
+  <input id="size1" class="field" type="text" placeholder="Size">
+  <input id="location1" class="field" type="text" placeholder="Location">
+  <input id="reference1" class="field" type="text" placeholder="Reference">
+  <input id="remarks1" class="field" type="text" placeholder="Remarks">
+  <input id="cheque1" class="field" type="text" placeholder="Cheque/Bank Draft #">
+  <input id="bank1" class="field" type="text" placeholder="Bank & Branch">
+  <input id="words1" class="field" type="text" placeholder="Amount in words">
+  <input id="amount1" class="field" type="text" placeholder="Amount">
+  <input id="balance1" class="field" type="text" placeholder="Balance">
+
+  <!-- Client Copy -->
+  <input id="folio2" class="field" type="text" placeholder="Folio">
+  <input id="date2" class="field" type="text" placeholder="Date">
+  <input id="received2" class="field" type="text" placeholder="Received From">
+  <input id="father2" class="field" type="text" placeholder="Father/Husband Name">
+  <input id="nic2" class="field" type="text" placeholder="NIC">
+  <input id="contact2" class="field" type="text" placeholder="Contact">
+  <input id="saleid2" class="field" type="text" placeholder="Sale ID">
+  <input id="propertyno2" class="field" type="text" placeholder="Property No">
+  <input id="size2" class="field" type="text" placeholder="Size">
+  <input id="location2" class="field" type="text" placeholder="Location">
+  <input id="reference2" class="field" type="text" placeholder="Reference">
+  <input id="remarks2" class="field" type="text" placeholder="Remarks">
+  <input id="cheque2" class="field" type="text" placeholder="Cheque/Bank Draft #">
+  <input id="bank2" class="field" type="text" placeholder="Bank & Branch">
+  <input id="words2" class="field" type="text" placeholder="Amount in words">
+  <input id="amount2" class="field" type="text" placeholder="Amount">
+  <input id="balance2" class="field" type="text" placeholder="Balance">
+</div>
+
+
+</body>
+</html>

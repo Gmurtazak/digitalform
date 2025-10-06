@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Heaven Gold City Phase II - Payment Schedule</title>
+<style>
+  @page { size: A4; margin: 0; }
+  html, body { height: 100%; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  .a4 {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    margin: auto;
+    background: url('payment-schedule-2.jpg') no-repeat center top;
+    background-size: 210mm 297mm;
+    -webkit-print-color-adjust: exact;
+    box-sizing: border-box;
+  }
+
+  .row {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 8mm;
+    box-sizing: border-box;
+  }
+
+  .field {
+    position: absolute;
+    font-size: 10pt;
+    color: #000;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    height: 7mm;
+    line-height: 7mm;
+    font-family: Arial, sans-serif;
+  }
+
+  .no-print { margin: 10px 0; text-align: center; }
+  .btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+  }
+  .btn:hover { background: #555; }
+
+  @media print {
+    .no-print { display: none; }
+    .field { border: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <button onclick="window.print()" class="btn">🖨️ Print</button>
+</div>
+
+<div class="a4" id="page"></div>
+
+<script>
+  const container = document.getElementById("page");
+
+  const initialTopMM = 53;   // starting top
+  const rowStepBefore35 = 6; // step for rows 17–35
+  const rowStepAfter35  = 5.8; // slightly reduced step for rows 36–53
+
+  const col1Left = 37;   // Date
+  const col2Left = 83;   // Description
+  const col3Left = 160;  // Amount
+
+  function mm(v) {
+    return v.toFixed(3) + "mm";
+  }
+
+  for (let i = 17; i <= 53; i++) {
+    let rowIndex = i - 17;
+    let topMM;
+
+    if (i <= 35) {
+      // Rows 17–35 normal spacing
+      topMM = initialTopMM + rowStepBefore35 * rowIndex;
+    } else {
+      // From row 36 onwards, adjust with smaller step
+      let beforeRows = 35 - 17;
+      let beforeHeight = rowStepBefore35 * (beforeRows + 1);
+      let afterIndex = i - 35;
+      topMM = initialTopMM + beforeHeight + rowStepAfter35 * afterIndex;
+    }
+
+    const rowDiv = document.createElement("div");
+    rowDiv.className = "row";
+    rowDiv.style.top = mm(topMM);
+
+    let dateInput = document.createElement("input");
+    dateInput.type = "text";
+    dateInput.className = "field";
+    dateInput.style.left = mm(col1Left);
+    dateInput.style.width = mm(35);
+    dateInput.placeholder = "Date";
+
+    let descInput = document.createElement("input");
+    descInput.type = "text";
+    descInput.className = "field";
+    descInput.style.left = mm(col2Left);
+    descInput.style.width = mm(70);
+    descInput.placeholder = "Description";
+
+    let amtInput = document.createElement("input");
+    amtInput.type = "text";
+    amtInput.className = "field";
+    amtInput.style.left = mm(col3Left);
+    amtInput.style.width = mm(35);
+    amtInput.placeholder = "Amount";
+
+    rowDiv.appendChild(dateInput);
+    rowDiv.appendChild(descInput);
+    rowDiv.appendChild(amtInput);
+    container.appendChild(rowDiv);
+  }
+</script>
+
+</body>
+</html>

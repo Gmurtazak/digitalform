@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Booking Form</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  /* layout & printing */
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0; font-family: Arial, sans-serif; -webkit-print-color-adjust: exact; }
+  .a4 {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    margin: 8px auto;
+  }
+  .a4 img.bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 210mm;
+    height: 297mm;
+    z-index: -1;
+    object-fit: cover;
+  }
+
+  /* form inputs */
+  .field {
+    position: absolute;
+    font-size: 11pt;
+    color: #000;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    font-family: inherit;
+  }
+
+  @media print {
+    .no-print { display: none !important; }
+    .field {
+      border: none !important;
+      background: transparent !important;
+      outline: none !important;
+    }
+  }
+
+  /* --- Input field positions --- (kept your original positions) */
+  #date       { top: 62mm; left: 26mm; width: 40mm; }
+  #sno        { top: 62mm; left: 160mm; width: 35mm; }
+  #name       { top: 69mm; left: 27mm; width: 130mm; }
+  #cnic1      { top: 81mm; left: 38mm; width: 170mm; }
+  #father     { top: 92mm; left: 65mm; width: 120mm; }
+  #address    { top: 99mm; left: 51mm; width: 130mm; }
+  #mobile     { top: 112mm; left: 29mm; width: 60mm; }
+  #res        { top: 112mm; left: 115mm; width: 60mm; }
+  #nationality{ top: 119mm; left: 35mm; width: 55mm; }
+  #occupation { top: 119mm; left: 128mm; width: 60mm; }
+  #nextkin    { top: 126mm; left: 35mm; width: 60mm; }
+  #relation   { top: 126mm; left: 122mm; width: 60mm; }
+  #cnic2      { top: 138mm; left: 36mm; width: 171mm; }
+
+  #booking    { top: 153mm; left: 31mm; width: 40mm; }
+  #discount   { top: 153mm; left: 100mm; width: 40mm; }
+  #cost       { top: 163mm; left: 24mm; width: 40mm; }
+  #ncost      { top: 163mm; left: 97mm; width: 40mm; }
+
+  #plot       { top: 173mm; left: 30mm; width: 35mm; }
+  #type       { top: 173mm; left: 59mm; width: 35mm; }
+  #extras     { top: 173mm; left: 95mm; width: 35mm; }
+  #size       { top: 183mm; left: 23mm; width: 35mm; }
+  #phase      { top: 183mm; left: 61mm; width: 35mm; }
+  #tcost      { top: 183mm; left: 95mm; width: 35mm; }
+
+  #sales      { top: 254mm; left: 51mm; width: 80mm; }
+
+  /* header buttons */
+  .controls { text-align:center; margin:20px; }
+  .controls button {
+    padding:12px 24px;
+    font-size:16px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+  }
+  .btn-print { background:#007bff; color:#fff; }
+  .btn-save  { background:green; color:#fff; margin-left:10px; }
+</style>
+</head>
+<body>
+
+<div class="no-print controls">
+  <button class="btn-print" onclick="window.print()">Print</button>
+
+  <!-- Save button is now type="button" and we handle submit in JS (more reliable cross-browser) 
+  <button id="saveBtn" class="btn-save" type="button">Save</button>-->
+</div>
+
+<div class="a4">
+  <!-- Background image: ensure booking-form.jpg exists in same folder -->
+  <img src="booking-form.jpg" class="bg" alt="Booking form background">
+
+  <form id="bookingForm" autocomplete="off" novalidate>
+    <input id="date" name="date" class="field" type="text" placeholder="Date">
+    <input id="sno" name="sno" class="field" type="text" placeholder="S.No">
+    <input id="name" name="name" class="field" type="text" placeholder="Name">
+    <input id="cnic1" name="cnic1" class="field" type="text" placeholder="CNIC No">
+    <input id="father" name="father" class="field" type="text" placeholder="Father/Husband Name">
+    <input id="address" name="address" class="field" type="text" placeholder="Residential Address">
+    <input id="mobile" name="mobile" class="field" type="text" placeholder="Mobile">
+    <input id="res" name="res" class="field" type="text" placeholder="Res">
+    <input id="nationality" name="nationality" class="field" type="text" placeholder="Nationality">
+    <input id="occupation" name="occupation" class="field" type="text" placeholder="Occupation">
+    <input id="nextkin" name="nextkin" class="field" type="text" placeholder="Next of Kin">
+    <input id="relation" name="relation" class="field" type="text" placeholder="Relation">
+    <input id="cnic2" name="cnic2" class="field" type="text" placeholder="CNIC No">
+
+    <input id="booking" name="booking" class="field" type="text" placeholder="Booking">
+    <input id="discount" name="discount" class="field" type="text" placeholder="Discount">
+    <input id="cost" name="cost" class="field" type="text" placeholder="Cost">
+    <input id="ncost" name="ncost" class="field" type="text" placeholder="N. Cost">
+
+    <input id="plot" name="plot" class="field" type="text" placeholder="Plot No">
+    <input id="type" name="type" class="field" type="text" placeholder="Type">
+    <input id="size" name="size" class="field" type="text" placeholder="Size">
+    <input id="phase" name="phase" class="field" type="text" placeholder="Phase">
+    <input id="extras" name="extras" class="field" type="text" placeholder="Extras">
+    <input id="tcost" name="tcost" class="field" type="text" placeholder="T. Cost">
+
+    <input id="sales" name="sales" class="field" type="text" placeholder="Sales Person Name">
+  </form>
+</div>
+
+<footer style="text-align:center; font-size:13px; padding:6px; background:#333; color:#fff;">
+  Software design by Ghulam Murtaza | 0323-2054415
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('bookingForm');
+  const saveBtn = document.getElementById('saveBtn');
+  if (!form || !saveBtn) return;
+
+  // === CONFIG ===
+  const saveToServer = false; // set to true later if you add a server endpoint
+  const serverUrl = '/save-booking'; // change if saveToServer = true
+  // =============
+
+  // Central submit handler for form
+  async function handleSubmit(e) {
+    if (e) e.preventDefault();
+
+    const data = new FormData(form);
+    const fieldOrder = [
+      'date','sno','name','cnic1','father','address','mobile','res','nationality','occupation',
+      'nextkin','relation','cnic2','booking','discount','cost','ncost',
+      'plot','type','size','phase','extras','tcost','sales'
+    ];
+
+    const lines = [];
+    for (const key of fieldOrder) {
+      const value = (data.get(key) || '').toString().trim();
+      const label = key.replace(/([A-Z])/g, ' $1') // split camelCase (if any)
+                       .replace(/(\d+)/g, ' $1')   // separate digits
+                       .replace(/_/g, ' ')
+                       .replace(/\b\w/g, c => c.toUpperCase());
+      lines.push(`${label}: ${value}`);
+    }
+
+    // Append unexpected fields, if any
+    for (const [k, v] of data.entries()) {
+      if (!fieldOrder.includes(k)) {
+        const value = (v || '').toString().trim();
+        const label = k.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        lines.push(`${label}: ${value}`);
+      }
+    }
+
+    const header = `Booking Form Export — ${new Date().toLocaleString()}`;
+    const content = [header, '--------------------------------', ...lines].join('\r\n');
+
+    // Trigger download (.txt)
+    const blob = new Blob([content], { type: 'text/plain' });
+    const filename = `booking-${new Date().toISOString().replace(/[:.]/g,'-')}.txt`;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(a.href);
+    a.remove();
+
+    // Optional: send to server
+    if (saveToServer && serverUrl) {
+      try {
+        const payload = Object.fromEntries(data.entries());
+        const resp = await fetch(serverUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!resp.ok) console.error('Server save failed', resp.statusText);
+        else console.log('Saved to server');
+      } catch (err) {
+        console.error('Error sending to server:', err);
+      }
+    }
+  }
+
+  // handle actual form "submit" (covers keyboard Enter when inside a field)
+  form.addEventListener('submit', handleSubmit);
+
+  // Save button: trigger form.submit via requestSubmit if available (more reliable)
+  saveBtn.addEventListener('click', () => {
+    // If browsers support requestSubmit (preferred), use it to trigger form's submit event
+    if (typeof form.requestSubmit === 'function') {
+      form.requestSubmit();
+    } else {
+      // fallback: create a temporary submit button to trigger submit event
+      const tmp = document.createElement('button');
+      tmp.type = 'submit';
+      tmp.style.display = 'none';
+      form.appendChild(tmp);
+      tmp.click();
+      tmp.remove();
+    }
+  });
+});
+</script>
+
+</body>
+</html>
